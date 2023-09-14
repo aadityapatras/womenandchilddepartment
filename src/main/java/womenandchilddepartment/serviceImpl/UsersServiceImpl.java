@@ -37,8 +37,8 @@ public class UsersServiceImpl implements UsersService{
 		if(b1==true){return "User Already exist pease Login";
 	}
 	else{
-//		String encode = passwordEncoder.encode(userDto.getPassword());
-//		userDto.setPassword(encode);
+		String encode = passwordEncoder.encode(userDto.getPassword());
+		userDto.setPassword(encode);
 
 		String userId1= userDto.getName()+userDto.getTenthRollNumber();
 
@@ -78,7 +78,8 @@ users.setFather_Name(usersDto.getFather_Name());
 			byuserConfId.setPicture(applicationSubmissionDto.getPicture());
 			byuserConfId.setNatureOfWorksPerformed(applicationSubmissionDto.getNatureOfWorksPerformed());
 			byuserConfId.setWorkExperience(applicationSubmissionDto.getWorkExperience());
-			byuserConfId.setPost(applicationSubmissionDto.getPost());
+//			byuserConfId.setPost(applicationSubmissionDto.getPost());
+//			byuserConfId.setPost(applicationSubmissionDto.getPost());
 			byuserConfId.setOrganizationName(applicationSubmissionDto.getOrganizationName());
 			byuserConfId.setYearsOfExperience(applicationSubmissionDto.getYearsOfExperience());
 			byuserConfId.setSignature(applicationSubmissionDto.getSignature());

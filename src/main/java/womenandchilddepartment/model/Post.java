@@ -1,16 +1,9 @@
 package womenandchilddepartment.model;
 
 import java.util.Date;
+import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 
@@ -44,15 +37,30 @@ public class Post {
     @JoinColumn(name= "advertisementId")
     private Advertisement advertisement;
 
+	@ManyToMany(mappedBy = "post")
+	Set<User> user;
+
 	public Post() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
 
-	public Post(int postCode, String postName, String qualification, int experienceRequired, String ageCriteria,
-			Date openDate, Date closeDate, Advertisement advertisement) {
-		super();
+//	public Post(int postCode, String postName, String qualification, int experienceRequired, String ageCriteria,
+//			Date openDate, Date closeDate, Advertisement advertisement) {
+//		super();
+//		this.postCode = postCode;
+//		this.postName = postName;
+//		this.qualification = qualification;
+//		this.experienceRequired = experienceRequired;
+//		this.ageCriteria = ageCriteria;
+//		this.openDate = openDate;
+//		this.closeDate = closeDate;
+//		this.advertisement = advertisement;
+//	}
+
+
+	public Post(int postCode, String postName, String qualification, int experienceRequired, String ageCriteria, Date openDate, Date closeDate, Advertisement advertisement, Set<User> user) {
 		this.postCode = postCode;
 		this.postName = postName;
 		this.qualification = qualification;
@@ -61,8 +69,16 @@ public class Post {
 		this.openDate = openDate;
 		this.closeDate = closeDate;
 		this.advertisement = advertisement;
+		this.user = user;
 	}
 
+	public Set<User> getUser() {
+		return user;
+	}
+
+	public void setUser(Set<User> user) {
+		this.user = user;
+	}
 
 	public int getPostCode() {
 		return postCode;

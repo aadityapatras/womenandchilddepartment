@@ -4,15 +4,9 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -55,12 +49,20 @@ public class User implements UserDetails{
 	
 	private String gender;
 	private String picture;
-	private String post;
+
 	private String mobileNo;
 	private String technical_professionalQualification;
 	
 	 @Enumerated(EnumType.STRING)
 	    private Role role;
+
+	@ManyToMany
+	@JoinTable(
+			name = "course_like",
+			joinColumns = @JoinColumn(name = "user_id"),
+			inverseJoinColumns = @JoinColumn(name = "post_id"))
+	Set<Post> post;
+
 
 	private String areYouADepttCandidate;
 	private String organizationName;
@@ -74,26 +76,59 @@ public class User implements UserDetails{
 	private String workExperience;
 	private String anyOtherDoc;
 
-	public User(int uid, boolean hasLoggedOnce, String userConfId, String post, String tenthRollNumber, String yearOfPassingTenth, String name, String email, String password, String father_Name, String educatinal_Qualification, LocalDate  dateOfBirth, String category, String address, String gender, String picture, String mobileNo, String technical_professionalQualification, Role role, String areYouADepttCandidate, String organizationName, String yearsOfExperience, String natureOfWorksPerformed, String signature, String tenthExamMarkSheet_Certificate, String adressProof, String lastYearMarksheet, String workExperience, String anyOtherDoc) {
+//	public User(int uid, boolean hasLoggedOnce, String userConfId, String post, String tenthRollNumber, String yearOfPassingTenth, String name, String email, String password, String father_Name, String educatinal_Qualification, LocalDate  dateOfBirth, String category, String address, String gender, String picture, String mobileNo, String technical_professionalQualification, Role role, String areYouADepttCandidate, String organizationName, String yearsOfExperience, String natureOfWorksPerformed, String signature, String tenthExamMarkSheet_Certificate, String adressProof, String lastYearMarksheet, String workExperience, String anyOtherDoc) {
+//		this.uid = uid;
+//		this.userConfId = userConfId;
+//		this.tenthRollNumber = tenthRollNumber;
+//		this.yearOfPassingTenth = yearOfPassingTenth;
+//		this.name = name;
+//		this.hasLoggedOnce=hasLoggedOnce;
+//		this.post=post;
+//		this.email = email;
+//		this.password = password;
+//		this.father_Name = father_Name;
+//		this.educatinal_Qualification = educatinal_Qualification;
+//		this.dateOfBirth = dateOfBirth;
+//		this.category = category;
+//		this.address = address;
+//		this.gender = gender;
+//		this.picture = picture;
+//		this.mobileNo = mobileNo;
+//		this.technical_professionalQualification = technical_professionalQualification;
+//		this.role = role;
+//		this.areYouADepttCandidate = areYouADepttCandidate;
+//		this.organizationName = organizationName;
+//		this.yearsOfExperience = yearsOfExperience;
+//		this.natureOfWorksPerformed = natureOfWorksPerformed;
+//		this.signature = signature;
+//		this.tenthExamMarkSheet_Certificate = tenthExamMarkSheet_Certificate;
+//		this.adressProof = adressProof;
+//		this.lastYearMarksheet = lastYearMarksheet;
+//		this.workExperience = workExperience;
+//		this.anyOtherDoc = anyOtherDoc;
+//	}
+
+	public User(int uid, String userConfId, String tenthRollNumber, String yearOfPassingTenth, String name, String email, String password, String father_Name, String educatinal_Qualification, LocalDate dateOfBirth, String category, boolean hasLoggedOnce, String address, String gender, String picture, String mobileNo, String technical_professionalQualification, Role role, Set<Post> post1, String areYouADepttCandidate, String organizationName, String yearsOfExperience, String natureOfWorksPerformed, String signature, String tenthExamMarkSheet_Certificate, String adressProof, String lastYearMarksheet, String workExperience, String anyOtherDoc, Set<Post> post) {
 		this.uid = uid;
 		this.userConfId = userConfId;
 		this.tenthRollNumber = tenthRollNumber;
 		this.yearOfPassingTenth = yearOfPassingTenth;
 		this.name = name;
-		this.hasLoggedOnce=hasLoggedOnce;
-		this.post=post;
 		this.email = email;
 		this.password = password;
 		this.father_Name = father_Name;
 		this.educatinal_Qualification = educatinal_Qualification;
 		this.dateOfBirth = dateOfBirth;
 		this.category = category;
+		this.hasLoggedOnce = hasLoggedOnce;
 		this.address = address;
 		this.gender = gender;
 		this.picture = picture;
+
 		this.mobileNo = mobileNo;
 		this.technical_professionalQualification = technical_professionalQualification;
 		this.role = role;
+		this.post = post;
 		this.areYouADepttCandidate = areYouADepttCandidate;
 		this.organizationName = organizationName;
 		this.yearsOfExperience = yearsOfExperience;
@@ -104,6 +139,15 @@ public class User implements UserDetails{
 		this.lastYearMarksheet = lastYearMarksheet;
 		this.workExperience = workExperience;
 		this.anyOtherDoc = anyOtherDoc;
+
+	}
+
+	public Set<Post> getPost() {
+		return post;
+	}
+
+	public void setPost(Set<Post> post) {
+		this.post = post;
 	}
 
 	public boolean isHasLoggedOnce() {
@@ -127,13 +171,6 @@ public class User implements UserDetails{
 		// TODO Auto-generated constructor stub
 	}
 
-	public String getPost() {
-		return post;
-	}
-
-	public void setPost(String post) {
-		this.post = post;
-	}
 
 	public String getAreYouADepttCandidate() {
 		return areYouADepttCandidate;
@@ -349,6 +386,7 @@ public class User implements UserDetails{
 	public void setRole(Role role) {
 		this.role = role;
 	}
+
 
 	@Override
 	    public Collection<? extends GrantedAuthority> getAuthorities() {

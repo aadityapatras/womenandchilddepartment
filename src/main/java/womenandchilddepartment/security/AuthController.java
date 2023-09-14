@@ -11,7 +11,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
+import womenandchilddepartment.dto.ApiResponse;
 import womenandchilddepartment.dto.Login;
+import womenandchilddepartment.dto.PasswordUpdateRequest;
 import womenandchilddepartment.exception.ApiException;
 import womenandchilddepartment.dto.UserDto;
 import womenandchilddepartment.model.User;
@@ -80,7 +82,7 @@ public class AuthController {
     
     // register new user api
     @PostMapping("/login555")
-    public Object login555(@RequestBody Login loginRequest) {
+    public ResponseEntity<ApiResponse> login555(@RequestBody Login loginRequest) {
         String userConfId = loginRequest.getUserConfId();
         String password = loginRequest.getPassword();
         LocalDate dateOfBirth = loginRequest.getDateOfBirth();
@@ -90,10 +92,12 @@ public class AuthController {
 
         boolean isAuthenticated = usersService.authenticateUser(userConfId, password, dateOfBirth );
 
+
         if (isAuthenticated) {
-            return ResponseEntity.ok("Login successful!");
+            return new ResponseEntity<ApiResponse>(new ApiResponse("user Logged In successfully", true), HttpStatus.OK);
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed. Check your credentials.");
+            return new ResponseEntity<ApiResponse>(new ApiResponse("Not Logged In", false), HttpStatus.UNAUTHORIZED);
+                   // ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed. Check your credentials.");
         }
     }
     @PostMapping("/signup")
