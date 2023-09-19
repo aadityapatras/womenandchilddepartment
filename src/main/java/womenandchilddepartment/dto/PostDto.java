@@ -10,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -24,33 +26,34 @@ import womenandchilddepartment.model.Advertisement;
 //@NoArgsConstructor
 //@AllArgsConstructor
 public class PostDto {
-	@Size(min=6)
-	private int postCode;
-	
+
+	private int pI;
+//	private String postCode;
 	private String postName;
-	
+
 	private String qualification;
-	
+
 	private int experienceRequired;
-	
-	@Pattern(message = "Roll number must be a digit", regexp="^[0-9]*$")
-	private String ageCriteria;
-	
+
+//	@Pattern(message = "Roll number must be a digit", regexp="^[0-9]*$")
+//@Min(value = 18, message = "Age must be at least 18")
+//@Max(value = 60, message = "Age cannot exceed 60")
+	private int ageCriteria;
+
 	private Date openDate;
-	
+
 	private Date closeDate;
-	
+
 	private Advertisement advertisement;
 
 	public PostDto() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	
-	public PostDto(int postCode, String postName, String qualification, int experienceRequired, String ageCriteria,
-			Date openDate, Date closeDate, Advertisement advertisement) {
-		super();
-		this.postCode = postCode;
+
+	public PostDto(int pI, String postName, String qualification, int experienceRequired, int ageCriteria, Date openDate, Date closeDate, Advertisement advertisement) {
+		this.pI = pI;
+
 		this.postName = postName;
 		this.qualification = qualification;
 		this.experienceRequired = experienceRequired;
@@ -60,19 +63,16 @@ public class PostDto {
 		this.advertisement = advertisement;
 	}
 
+	public void setpI(int pI) {
+		this.pI = pI;
+	}
 
-
-
-
-
-	public int getPostCode() {
-		return postCode;
+	public int getpI() {
+		return pI;
 	}
 
 
-	public void setPostCode(int postCode) {
-		this.postCode = postCode;
-	}
+
 
 
 	public String getPostName() {
@@ -105,12 +105,12 @@ public class PostDto {
 	}
 
 
-	public String getAgeCriteria() {
+	public int getAgeCriteria() {
 		return ageCriteria;
 	}
 
 
-	public void setAgeCriteria(String ageCriteria) {
+	public void setAgeCriteria(int ageCriteria) {
 		this.ageCriteria = ageCriteria;
 	}
 
@@ -152,8 +152,8 @@ public class PostDto {
 		this.advertisement = advertisement;
 	}
 
-	
-	
+
+
 }
 
 	

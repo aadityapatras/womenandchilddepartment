@@ -24,8 +24,8 @@ public class UsersServiceImpl implements UsersService{
 	
 	@Autowired
 	private UserRepo usersRepo;
-	@Autowired
-	private PasswordEncoder passwordEncoder;
+//	@Autowired
+//	private PasswordEncoder passwordEncoder;
 	@Autowired
 	private ModelMapper modelMapper;
 
@@ -37,10 +37,10 @@ public class UsersServiceImpl implements UsersService{
 		if(b1==true){return "User Already exist pease Login";
 	}
 	else{
-		String encode = passwordEncoder.encode(userDto.getPassword());
-		userDto.setPassword(encode);
+//		String encode = passwordEncoder.encode(userDto.getPassword());
+//		userDto.setPassword(encode);
 
-		String userId1= userDto.getName()+userDto.getTenthRollNumber();
+		String userId1= userDto.getFirstName()+userDto.getTenthRollNumber();
 
 		User user=modelMapper.map(userDto, User.class);
 
@@ -57,10 +57,17 @@ public class UsersServiceImpl implements UsersService{
 	public UserDto updateUser(UserDto usersDto, Integer userId) {
 		User users=usersRepo.findById(userId).orElseThrow(()-> new ResourceNotFoundException("User", "user", userId));
 //				users.setEmail(usersDto.getEmailId())
+		if(usersDto.getEmail()!=null)
 users.setEmail(usersDto.getEmail());
+		if(usersDto.getPassword()!=null)
 users.setPassword(usersDto.getPassword());
-users.setName(usersDto.getName());
+		if(usersDto.getFirstName()!=null)
+users.setFirtsName(usersDto.getFirstName());
+		if(usersDto.getLastName()!=null)
+		users.setLastName(usersDto.getLastName());
+		if(usersDto.getPicture()!=null)
 users.setPicture(usersDto.getPicture());
+		if(usersDto.getFather_Name()!=null)
 users.setFather_Name(usersDto.getFather_Name());
 		User updatedUser=usersRepo.save(users);
 		UserDto usertech=modelMapper.map(updatedUser, UserDto.class);
@@ -149,11 +156,28 @@ public Object getUserConfId(String userConfId)
 
 		return false;
 	}
+@Override
+	public User authenticateUserNew(String userConfId, String password, LocalDate dateOfBirth) {
+		User user = findByUserConfId(userConfId);
+		//String s=passwordEncoder.encode(user.getPassword());
+
+		if (user != null && user.getPassword().equals(password) && user.getDateOfBirth().isEqual(dateOfBirth)) {
+			boolean hasLoggedOnce = user.isHasLoggedOnce();
+			if (!hasLoggedOnce) {
+				// Update hasLoggedOnce flag to true
+				user.setHasLoggedOnce(true);
+				usersRepo.save(user);
+			}
+//			return user;
+		}
+
+		return user;
+	}
 
 	@Override
 	public String login(Login login) {
 		System.out.println("Received Login object: " + login);
-		User user = this.usersRepo.findOneByIgnoreCaseNameAndPassword(login.getUserConfId(), login.getPassword());
+		User user = this.usersRepo.findOneByIgnoreCaseFirstNameAndPassword(login.getUserConfId(), login.getPassword());
 		System.out.println("Retrieved User: " + user);
 		System.out.println(login.getPassword());
 		if (user == null) {

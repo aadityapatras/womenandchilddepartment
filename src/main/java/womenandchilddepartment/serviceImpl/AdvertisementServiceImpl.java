@@ -1,16 +1,21 @@
 package womenandchilddepartment.serviceImpl;
 
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import org.springframework.transaction.annotation.Transactional;
 import womenandchilddepartment.dto.AdvertisementDto;
+import womenandchilddepartment.dto.ApplicationSubmissionDto;
 import womenandchilddepartment.dto.PostDto;
+import womenandchilddepartment.exception.AdvertisementAlreadyExistsException;
+import womenandchilddepartment.exception.AdvertisementNotFoundException;
+import womenandchilddepartment.exception.ResourceNotFoundException;
 import womenandchilddepartment.model.Advertisement;
 import womenandchilddepartment.model.Post;
 import womenandchilddepartment.repo.AdvertisementRepo;
@@ -29,38 +34,35 @@ public class AdvertisementServiceImpl implements AdvertisementService{
 	@Autowired
 	private ModelMapper modelMapper;
 	@Override
-	public AdvertisementDto createAdvertisementData(AdvertisementDto advertisementDto) {
+	public boolean  createAdvertisementData(AdvertisementDto advertisementDto) {
 		Advertisement map = modelMapper.map(advertisementDto, Advertisement.class);
-		int advertisementNo = advertisementDto.getAdvertisementNo();
-//		List<Advertisement> findAll = advertisementRepo.findAll();
-//		for(Advertisement ad:findAll)
-//		{
-//			int advertisementNo1 = ad.getAdvertisementNo();
-//			if(advertisementNo==advertisementNo)
-//			{
-//				advertisementDto.setAdvertisementNo(ad);
-//				break;
-//			}
-//		}
-	//	return advertisementDto;}
+//		String advertisementNo = advertisementDto.getAdvertisementNo();
+//		Advertisement save = advertisementRepo.save(map);
+//		return modelMapper.map(save, AdvertisementDto.class);
+
+		if (advertisementRepo.existsByAdvertisementNo(advertisementDto.getAdvertisementNo())) {
+			return false;
+			// Advertisement with this advertisementNo already exists
+		}
+
+		// Create a new advertisement
+		String advertisementNo = advertisementDto.getAdvertisementNo();
 
 		Advertisement save = advertisementRepo.save(map);
-		return modelMapper.map(save, AdvertisementDto.class);
-		//		int i = Calendar.getInstance().get(Calendar.YEAR);
-//		long count = advertisementRepo.count()+1;
-//		String u=count+"_"+i;
-//		map.setAsfsid(u);
+//		return modelMapper.map(save, AdvertisementDto.class);
+		return true; // Advertisement created successfully
+
 	}
 	@Override
 	public List<AdvertisementDto> getAllAddv() {
-			List<Advertisement> userst = advertisementRepo.findAll();
-			List<AdvertisementDto> collect = userst.stream().map((advertisement)->modelMapper.map(advertisement, AdvertisementDto.class)).collect(Collectors.toList());
+		List<Advertisement> userst = advertisementRepo.findAll();
+		List<AdvertisementDto> collect = userst.stream().map((advertisement)->modelMapper.map(advertisement, AdvertisementDto.class)).collect(Collectors.toList());
 		return collect;
 	}
 
 	@Override
 	public List<PostDto> getAdvById(Integer adId) {
-		int advertisementNo = advertisementRepo.findByAdvertisementNo(adId).getAdvertisementNo();
+		Advertisement advertisementNo = advertisementRepo.findById(adId).orElseThrow(()-> new ResourceNotFoundException("Advertisement", "advertisement", adId));
 		List<Post> all = postRepo.findAll();
 //		all.stream().
 //		List<Post> allById = postRepo.findAllById(Set.of(advertisementNo));
@@ -70,7 +72,7 @@ public class AdvertisementServiceImpl implements AdvertisementService{
 
 	@Override
 	public Object createUniqueAdv(AdvertisementDto advertisementDto) {
-	int ad=	advertisementDto.getAdvertisementNo();
+		String ad=	advertisementDto.getAdvertisementNo();
 		Advertisement map = modelMapper.map(advertisementDto, Advertisement.class);
 		boolean b = advertisementRepo.existsByAdvertisementNo(ad);
 		if(b==true)
@@ -86,6 +88,11 @@ public class AdvertisementServiceImpl implements AdvertisementService{
 
 			return ad22;
 		}
+	}
+
+	@Override
+	public Object updateUserConfId(ApplicationSubmissionDto applicationSubmissionDto, String userConfId) {
+		return null;
 	}
 
 //		int advertisementNo = map.getAdvertisementNo();
@@ -105,10 +112,55 @@ public class AdvertisementServiceImpl implements AdvertisementService{
 //		Advertisement save = advertisementRepo.save(map);
 //		return modelMapper.map(save, AdvertisementDto.class);
 
+	@Override
+	public boolean exists(String advertisementNo)
+	{
+		boolean b = advertisementRepo.existsByAdvertisementNo(advertisementNo);
+		return b;
+	}
 
+	@Override
+	public AdvertisementDto updateCity(AdvertisementDto cityDto, String advertisementNo) {
+		return null;
+	}
 
+	@Override
+public ResponseEntity<String> deleteAdvertisementByAdvertisementNo(String advertisementNo) {
+//	Optional<Advertisement> existingValue = advertisementRepo.findByAdvertisementNo(advertisementNo);
 
+		return ResponseEntity.ok("Value '" + advertisementNo + "' deleted successfully.");
+	}
+//	else {
+//		// If the value doesn't exist, return a not found response
+//		return ResponseEntity.notFound().build();
+//	}
+//@Override
+//public AdvertisementDto updateCity(AdvertisementDto cityDto, String advertisementNo) {
+//	Advertisement city=advertisementRepo.findOneByIgnoreCaseAdvertisementNo(advertisementNo);
+//	city.setAdvertisementNo(cityDto.getAdvertisementNo());
+////		city.setCountry(cityDto.getCountry());
+//	Advertisement updatedCity=advertisementRepo.save(city);
+//	AdvertisementDto updatedCity1=modelMapper.map(city, AdvertisementDto.class);
+//	return updatedCity1;
+//}
+@Transactional
+public void updateAdvertisementNo(String oldAdvertisementNo, String newAdvertisementNo) throws ResourceNotFoundException, AdvertisementAlreadyExistsException {
+	Advertisement advertisement = advertisementRepo.findByAdvertisementNo(oldAdvertisementNo);
+	boolean b = advertisementRepo.existsByAdvertisementNo(oldAdvertisementNo);
+	if (b==false) {
+		throw new ResourceNotFoundException("Advertisement", "advertisement", oldAdvertisementNo);
+	}
+
+	Advertisement existingAdvertisement = advertisementRepo.findByAdvertisementNo(newAdvertisementNo);
+	if (existingAdvertisement != null) {
+		throw new AdvertisementAlreadyExistsException("New advertisementNo already exists.");
+	}
+
+	advertisement.setAdvertisementNo(newAdvertisementNo);
+	advertisementRepo.save(advertisement);
+}
+}
 
 //	}
 
-}
+

@@ -16,6 +16,7 @@ import womenandchilddepartment.dto.Login;
 import womenandchilddepartment.dto.PasswordUpdateRequest;
 import womenandchilddepartment.exception.ApiException;
 import womenandchilddepartment.dto.UserDto;
+import womenandchilddepartment.model.Admin;
 import womenandchilddepartment.model.User;
 import womenandchilddepartment.repo.UserRepo;
 import womenandchilddepartment.service.UsersService;
@@ -67,7 +68,43 @@ public class AuthController {
         }
 
     }
+    @PostMapping("/login555")
+    public ResponseEntity<JwtAuthResponse> login555(@RequestBody Login loginRequest) {
+        String userConfId = loginRequest.getUserConfId();
+        String password = loginRequest.getPassword();
+        LocalDate dateOfBirth = loginRequest.getDateOfBirth();
 
+//		boolean isAuthenticated = usersService.authenticateUser(userConfId, password, dateOfBirth );
+        User user = usersService.authenticateUserNew(userConfId, password, dateOfBirth);
+//		UserDetails userDetails = this.userDetailsService.loadUserByUsername(request.getUsername());
+
+        JwtAuthResponse response = new JwtAuthResponse();
+        if (user != null && user.getPassword().equals(password) && user.getDateOfBirth().isEqual(dateOfBirth)) {
+            String token = this.jwtTokenHelper.generateToken(user);
+
+            response.setToken(token);
+        }
+        return new ResponseEntity<JwtAuthResponse>(response, HttpStatus.OK);
+
+//		if (isAuthenticated) {
+//			return new ResponseEntity<ApiResponse>(new ApiResponse("user Logged In successfully", true), HttpStatus.OK);
+//		} else {
+//			return new ResponseEntity<ApiResponse>(new ApiResponse("Not Logged In", false), HttpStatus.UNAUTHORIZED);
+//			// ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed. Check your credentials.");
+//		}
+    }
+    @PostMapping("/login1")
+    public ResponseEntity<JwtAuthResponse> createToken1(@RequestBody JwtAuthRequest request) throws Exception {
+        this.authenticate(request.getUsername(), request.getPassword());
+        UserDetails userDetails = this.userDetailsService.loadUserByUsername(request.getUsername());
+        Admin admin = (Admin) userDetails; // Cast UserDetails to Admin
+        String token = this.jwtTokenHelper.generateToken(admin);
+
+        JwtAuthResponse response = new JwtAuthResponse();
+        response.setToken(token);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 //    @PostMapping("/login")
 //    public ResponseEntity<JwtAuthResponse> createDepartmentToken(@RequestBody JwtAuthRequest request) throws Exception {
 //        this.authenticate(request.getUsername(), request.getPassword());
@@ -81,25 +118,7 @@ public class AuthController {
 //    }
     
     // register new user api
-    @PostMapping("/login555")
-    public ResponseEntity<ApiResponse> login555(@RequestBody Login loginRequest) {
-        String userConfId = loginRequest.getUserConfId();
-        String password = loginRequest.getPassword();
-        LocalDate dateOfBirth = loginRequest.getDateOfBirth();
-//        System.out.println(email);
-//        System.out.println(password);
-//        LocalDate dateOfBirth = loginRequest.getDateOfBirth();
 
-        boolean isAuthenticated = usersService.authenticateUser(userConfId, password, dateOfBirth );
-
-
-        if (isAuthenticated) {
-            return new ResponseEntity<ApiResponse>(new ApiResponse("user Logged In successfully", true), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<ApiResponse>(new ApiResponse("Not Logged In", false), HttpStatus.UNAUTHORIZED);
-                   // ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed. Check your credentials.");
-        }
-    }
     @PostMapping("/signup")
     public ResponseEntity<String> createUserData(@Valid @RequestBody UserDto UserDTO) {
 
@@ -118,5 +137,7 @@ public class AuthController {
         User user = this.userRepo.findByEmail(principal.getName()).get();
         return new ResponseEntity<UserDto>(this.mapper.map(user, UserDto.class), HttpStatus.ACCEPTED);
     }
+
+
 
 }

@@ -17,6 +17,9 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
+import static womenandchilddepartment.model.Role.USER;
+
 @Entity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class User implements UserDetails{
@@ -29,7 +32,8 @@ public class User implements UserDetails{
 	
 	
 	private String yearOfPassingTenth;
-	private String name;
+	private String firstName;
+	private String lastName;
 	//@Column(unique=true)
 	
 	private String email;
@@ -54,7 +58,7 @@ public class User implements UserDetails{
 	private String technical_professionalQualification;
 	
 	 @Enumerated(EnumType.STRING)
-	    private Role role;
+	    private Role role=USER;
 
 	@ManyToMany
 	@JoinTable(
@@ -108,12 +112,14 @@ public class User implements UserDetails{
 //		this.anyOtherDoc = anyOtherDoc;
 //	}
 
-	public User(int uid, String userConfId, String tenthRollNumber, String yearOfPassingTenth, String name, String email, String password, String father_Name, String educatinal_Qualification, LocalDate dateOfBirth, String category, boolean hasLoggedOnce, String address, String gender, String picture, String mobileNo, String technical_professionalQualification, Role role, Set<Post> post1, String areYouADepttCandidate, String organizationName, String yearsOfExperience, String natureOfWorksPerformed, String signature, String tenthExamMarkSheet_Certificate, String adressProof, String lastYearMarksheet, String workExperience, String anyOtherDoc, Set<Post> post) {
+
+	public User(int uid, String userConfId, String tenthRollNumber, String yearOfPassingTenth, String firstName, String lastName, String email, String password, String father_Name, String educatinal_Qualification, LocalDate dateOfBirth, String category, boolean hasLoggedOnce, String address, String gender, String picture, String mobileNo, String technical_professionalQualification, Role role, Set<Post> post, String areYouADepttCandidate, String organizationName, String yearsOfExperience, String natureOfWorksPerformed, String signature, String tenthExamMarkSheet_Certificate, String adressProof, String lastYearMarksheet, String workExperience, String anyOtherDoc) {
 		this.uid = uid;
 		this.userConfId = userConfId;
 		this.tenthRollNumber = tenthRollNumber;
 		this.yearOfPassingTenth = yearOfPassingTenth;
-		this.name = name;
+		this.firstName = firstName;
+		this.lastName = lastName;
 		this.email = email;
 		this.password = password;
 		this.father_Name = father_Name;
@@ -124,7 +130,6 @@ public class User implements UserDetails{
 		this.address = address;
 		this.gender = gender;
 		this.picture = picture;
-
 		this.mobileNo = mobileNo;
 		this.technical_professionalQualification = technical_professionalQualification;
 		this.role = role;
@@ -139,7 +144,22 @@ public class User implements UserDetails{
 		this.lastYearMarksheet = lastYearMarksheet;
 		this.workExperience = workExperience;
 		this.anyOtherDoc = anyOtherDoc;
+	}
 
+	public void setFirtsName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getFirtsName() {
+		return firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
 	}
 
 	public Set<Post> getPost() {
@@ -276,13 +296,6 @@ public class User implements UserDetails{
 		this.yearOfPassingTenth = yearOfPassingTenth;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
 
 	public String getEmail() {
 		return email;
@@ -292,8 +305,45 @@ public class User implements UserDetails{
 		this.email = email;
 	}
 
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		String roleName = "ROLE_" + "USER";
+		SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(roleName);
+
+		List<SimpleGrantedAuthority> simpleGrantedAuthorities = new java.util.ArrayList<>();
+		simpleGrantedAuthorities.add(simpleGrantedAuthority);
+		return simpleGrantedAuthorities;
+
+//		return null;
+	}
+
 	public String getPassword() {
 		return password;
+	}
+
+	@Override
+	public String getUsername() {
+		return userConfId;
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return true;
 	}
 
 	public void setPassword(String password) {
@@ -388,47 +438,7 @@ public class User implements UserDetails{
 	}
 
 
-	@Override
-	    public Collection<? extends GrantedAuthority> getAuthorities() {
-//				SimpleGrantedAuthority simpleGrantedAuthority=  new SimpleGrantedAuthority(role.toString());
-	        String roleName = "ROLE_" + role.toString();
-	        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(roleName);
 
-	        List<SimpleGrantedAuthority> simpleGrantedAuthorities = new java.util.ArrayList<>();
-	        simpleGrantedAuthorities.add(simpleGrantedAuthority);
-	        return simpleGrantedAuthorities;
-//				return authorities;
-	    }
-	    @Override
-	    public String getUsername() {
-	        // TODO Auto-generated method stub
-	        return email;
-	    }
-	    @Override
-	    public boolean isAccountNonExpired() {
-	        // TODO Auto-generated method stub
-	        return true;
-	    }
-	    @Override
-	    public boolean isAccountNonLocked() {
-	        // TODO Auto-generated method stub
-	        return true;
-	    }
-	    @Override
-	    public boolean isCredentialsNonExpired() {
-	        // TODO Auto-generated method stub
-	        return true;
-	    }
-	    @Override
-	    public boolean isEnabled() {
-	        // TODO Auto-generated method stub
-	        return true;
-	    }
-	    @Override
-	    public String toString() {
-	        return "User [id=" + uid + ", name=" + name + ", email=" + email + ", password=" + password + ", role="
-	                + role + "]";
-	    }
 
 	 
 }

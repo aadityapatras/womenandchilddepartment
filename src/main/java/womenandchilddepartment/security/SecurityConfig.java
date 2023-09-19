@@ -31,7 +31,8 @@ public class SecurityConfig {
 	public static final String [] PUBLIC_URLS= {
 			"/login",
 			"/signup",
-            "/login555"
+            "/login555",
+            "/create1","/login1"
 
 
 	};
@@ -58,8 +59,10 @@ public class SecurityConfig {
                 .permitAll()
                 .antMatchers(HttpMethod.GET)
                 .permitAll()
-        		.antMatchers("/user/**","/advertisements/**", "/post/**", "/app/**")
+        		.antMatchers("/advertisements/**", "/post/**", "/app/**")
                 .hasRole("ADMIN")
+                .antMatchers("/user/**" )
+                .hasRole("USER")
                 .antMatchers("/advertisements/**")
                 .hasRole("MANAGER")
               //  .antMatchers("/get").permitAll()
@@ -92,13 +95,15 @@ public class SecurityConfig {
 
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(this.customUserDetailService);
+
         provider.setPasswordEncoder(passwordEncoder());
+
         return provider;
     }
 
     @Bean
     public AuthenticationManager authenticationManagerBean(AuthenticationConfiguration configuration) throws Exception {
-        return configuration.getAuthenticationManager();
+                return configuration.getAuthenticationManager();
     }
 
 }

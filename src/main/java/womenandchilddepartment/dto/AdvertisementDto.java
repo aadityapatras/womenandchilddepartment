@@ -18,9 +18,9 @@ public class AdvertisementDto {
 
 	@UniqueElements(message="username should not be null!!")
 	@Column(unique = true)
-	private int advertisementNo;
+	private String advertisementNo;
 
-	public AdvertisementDto(int advertisementId, int advertisementNo) {
+	public AdvertisementDto(int advertisementId, String advertisementNo) {
 		this.advertisementId = advertisementId;
 //		this.asfsid = asfsid;
 		this.advertisementNo = advertisementNo;
@@ -31,15 +31,8 @@ public class AdvertisementDto {
 		// TODO Auto-generated constructor stub
 	}
 
-//	public String getAsfsid() {
-//		return asfsid;
-//	}
-//
-//	public void setAsfsid(String asfsid) {
-//		this.asfsid = asfsid;
-//	}
 
-	public int getAdvertisementNo() {
+	public String getAdvertisementNo() {
 		return advertisementNo;
 	}
 
@@ -51,10 +44,10 @@ public class AdvertisementDto {
 		this.advertisementId = advertisementId;
 	}
 
-	public void setAdvertisementNo(int advertisementNo) {
+	public void setAdvertisementNo(String advertisementNo) {
 		this.advertisementNo = advertisementNo;
 	}
-	
+
 //	private List<PostDto> postDto;
 
 

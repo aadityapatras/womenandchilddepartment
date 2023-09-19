@@ -26,5 +26,6 @@ public interface UsersService {
 	boolean updatePassword(String userConfId, String oldPassword, String newPassword);
 	User findByUsername(String userConfId);
 
+	public User authenticateUserNew(String userConfId, String password, LocalDate dateOfBirth);
 	//String authenticateUser(String userConfId);
 }

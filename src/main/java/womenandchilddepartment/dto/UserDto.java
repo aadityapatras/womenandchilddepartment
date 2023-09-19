@@ -13,6 +13,8 @@ import javax.validation.constraints.Size;
 
 import womenandchilddepartment.model.Role;
 
+import static womenandchilddepartment.dto.RoleDto.USER;
+
 public class UserDto {
 
 	
@@ -27,8 +29,10 @@ public class UserDto {
 	
 	@NotNull(message="username should not be null!!")
 	@Size(min=3, max=30, message="username must not be more than 50 words")
-	private String name;
-	
+	private String firstName;
+	@NotNull(message="username should not be null!!")
+	@Size(min=3, max=30, message="username must not be more than 50 words")
+	private String lastName;
 	//@Column(unique=true)
 	@NotNull(message="email should not be null!!")
 	@Email(message="Please insert a valid emailId")
@@ -67,7 +71,7 @@ public class UserDto {
 	private String technical_professionalQualification;
 	
 	
-	    private RoleDto role;
+	    private RoleDto role=USER;
 
 	public boolean isHasLoggedOnce() {
 		return hasLoggedOnce;
@@ -86,8 +90,9 @@ public class UserDto {
 		public UserDto(int uid,
 				@NotEmpty @Pattern(message = "Roll number must be a digit", regexp = "^[0-9]*$") String tenthRollNumber,
 				@NotEmpty @Pattern(message = "Year must be a digit", regexp = "^[0-9]*$") String yearOfPassingTenth,
-				@NotNull(message = "username should not be null!!") @Size(min = 3, max = 30, message = "username must not be more than 50 words") String name,
-				@NotNull(message = "email should not be null!!") @Email(message = "Please insert a valid emailId") String email,
+				@NotNull(message = "username should not be null!!") @Size(min = 3, max = 30, message = "username must not be more than 50 words") String firstName,
+					   @NotNull(message = "username should not be null!!") @Size(min = 3, max = 30, message = "username must not be more than 50 words") String lastName,
+					   @NotNull(message = "email should not be null!!") @Email(message = "Please insert a valid emailId") String email,
 				@NotNull(message = "password should not be null!!") @Size(min = 8, message = "password must not be less than 8 letters") String password,
 				@NotNull(message = "father_Name should not be null!!") @Size(min = 3, max = 30, message = "father_Name must not be more than 50 words") String father_Name,
 				@NotNull(message = "educatinal_Qualification should not be null!!") String educatinal_Qualification,
@@ -102,7 +107,8 @@ public class UserDto {
 			this.uid = uid;
 			this.tenthRollNumber = tenthRollNumber;
 			this.yearOfPassingTenth = yearOfPassingTenth;
-			this.name = name;
+			this.firstName = firstName;
+			this.lastName = lastName;
 			this.email = email;
 			this.password = password;
 			this.father_Name = father_Name;
@@ -118,7 +124,23 @@ public class UserDto {
 		}
 
 
-		public int getUid() {
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public int getUid() {
 			return uid;
 		}
 
@@ -147,15 +169,15 @@ public class UserDto {
 			this.yearOfPassingTenth = yearOfPassingTenth;
 		}
 
-
-		public String getName() {
-			return name;
-		}
-
-
-		public void setName(String name) {
-			this.name = name;
-		}
+//
+//		public String getName() {
+//			return name;
+//		}
+//
+//
+//		public void setName(String name) {
+//			this.name = name;
+//		}
 
 
 		public String getEmail() {

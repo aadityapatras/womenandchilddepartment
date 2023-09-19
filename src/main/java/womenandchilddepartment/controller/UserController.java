@@ -11,10 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import womenandchilddepartment.dto.*;
+import womenandchilddepartment.model.User;
+import womenandchilddepartment.security.JwtAuthResponse;
+import womenandchilddepartment.security.JwtTokenHelper;
 import womenandchilddepartment.service.FileService;
 import womenandchilddepartment.service.UsersService;
 
@@ -30,6 +34,9 @@ private FileService fileService;
 
 @Value("${project.image}")
 private String path;
+
+@Autowired
+private JwtTokenHelper jwtTokenHelper;
 
 @PostMapping(value="/users/create")
 public ResponseEntity<String> createUserData(@Valid @RequestBody UserDto userDto) throws IOException
@@ -161,11 +168,6 @@ public ResponseEntity<UserDto> uploadPicture(@RequestParam("image") MultipartFil
 		String login1 = usersService.login(login);
 		return new ResponseEntity<>(login1, HttpStatus.CREATED);
 }
-//@PutMapping(value="/updatePassword/{userConfId}")
-//	public Object updatePassword(@RequestBody UserDto userDto, @PathVariable String userConfId)
-//	{
-//		return usersService.updatePassword(userDto, userConfId);
-//	}
 
 	@PostMapping("/update-password")
 	public ResponseEntity<String> updatePassword(@RequestBody PasswordUpdateRequest passwordUpdateRequest) {
@@ -181,4 +183,6 @@ public ResponseEntity<UserDto> uploadPicture(@RequestParam("image") MultipartFil
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Password update failed. Check your credentials.");
 		}
 	}
+
+
 }

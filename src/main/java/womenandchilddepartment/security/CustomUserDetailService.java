@@ -7,19 +7,21 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import womenandchilddepartment.exception.ResourceNotFoundException;
-import womenandchilddepartment.model.User;
-import womenandchilddepartment.repo.UserRepo;
+import womenandchilddepartment.model.Admin;
+import womenandchilddepartment.repo.AdminRepo;
+//import womenandchilddepartment.model.User;
+//import womenandchilddepartment.repo.UserRepo;
 
 @Service
 public class CustomUserDetailService implements UserDetailsService {
 
     @Autowired
-    private UserRepo userRepo;
+    private AdminRepo adminRepo;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = this.userRepo.findByEmail(username)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "email : " + username, 0));
+        Admin user = this.adminRepo.findByEmail(username)
+                .orElseThrow(() -> new ResourceNotFoundException("Admin", "email : " + username, 0));
 
         return user;
 }}

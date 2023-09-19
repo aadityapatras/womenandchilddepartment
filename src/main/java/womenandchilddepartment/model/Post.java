@@ -5,6 +5,7 @@ import java.util.Set;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 
 import lombok.AllArgsConstructor;
@@ -12,30 +13,31 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-//@Getter
-//@Setter
-//@NoArgsConstructor
-//@AllArgsConstructor
+@Getter
+@Setter
 @Entity
 @Table(name="post")
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class Post {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int postCode;
+	private int pI;
 	private String postName;
 	private String qualification;
 	private int experienceRequired;
-	private String ageCriteria;
+	private int ageCriteria;
 	private Date openDate;
 	private Date closeDate;
-	
-	
-//	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private String postCode;
+
+	//	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 //	private Advertisement advertisement;
+//	@ManyToOne(cascade = CascadeType.ALL)
+//    @JoinColumn(name= "advertisementId")
+	@JsonIgnore
 	@ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name= "advertisementId")
-    private Advertisement advertisement;
+	@JoinColumn(name="advertisementId", nullable = false )
+	private Advertisement advertisement;
 
 	@ManyToMany(mappedBy = "post")
 	Set<User> user;
@@ -60,14 +62,16 @@ public class Post {
 //	}
 
 
-	public Post(int postCode, String postName, String qualification, int experienceRequired, String ageCriteria, Date openDate, Date closeDate, Advertisement advertisement, Set<User> user) {
-		this.postCode = postCode;
+	public Post(int pI, String postName, String qualification, int experienceRequired, int ageCriteria, Date openDate, Date closeDate, String postCode, Advertisement advertisement, Set<User> user) {
+		super();
+		this.pI = pI;
 		this.postName = postName;
 		this.qualification = qualification;
 		this.experienceRequired = experienceRequired;
 		this.ageCriteria = ageCriteria;
 		this.openDate = openDate;
 		this.closeDate = closeDate;
+		this.postCode = postCode;
 		this.advertisement = advertisement;
 		this.user = user;
 	}
@@ -80,15 +84,21 @@ public class Post {
 		this.user = user;
 	}
 
-	public int getPostCode() {
-		return postCode;
+	public void setpI(int pI) {
+		this.pI = pI;
 	}
 
-
-	public void setPostCode(int postCode) {
+	public void setPostCode(String postCode) {
 		this.postCode = postCode;
 	}
 
+	public int getpI() {
+		return pI;
+	}
+
+	public String getPostCode() {
+		return postCode;
+	}
 
 	public String getPostName() {
 		return postName;
@@ -120,12 +130,12 @@ public class Post {
 	}
 
 
-	public String getAgeCriteria() {
+	public int getAgeCriteria() {
 		return ageCriteria;
 	}
 
 
-	public void setAgeCriteria(String ageCriteria) {
+	public void setAgeCriteria(int ageCriteria) {
 		this.ageCriteria = ageCriteria;
 	}
 
@@ -158,8 +168,8 @@ public class Post {
 	public void setAdvertisement(Advertisement id) {
 		this.advertisement = id;
 	}
-	
-	
+
+
 }
 
 	

@@ -20,23 +20,28 @@ public class Postaddmapping {
 
 	@Autowired
 	private ModelMapper modelMapper;
-	
-  public Object checkCityDto(PostDto postDtoCheck)
-{
 
-	int count=postDtoCheck.getAdvertisement().getAdvertisementNo();
-
-	List<Advertisement> findAll = advertisementRepo.findAll();
-	for(Advertisement ad:findAll)
+	public Object checkCityDto(PostDto postDtoCheck)
 	{
-		int advertisementNo = ad.getAdvertisementNo();
-		if(count==advertisementNo)
-		{
-			postDtoCheck.setAdvertisement(ad);
-		break;
+		String advertisementNo1 = postDtoCheck.getAdvertisement().getAdvertisementNo();
+		if(advertisementNo1!=null) {
+			String count=postDtoCheck.getAdvertisement().getAdvertisementNo();
+
+			List<Advertisement> findAll = advertisementRepo.findAll();
+			for(Advertisement ad:findAll)
+			{
+				String advertisementNo = ad.getAdvertisementNo();
+				if(count.equals(advertisementNo))
+				{
+					postDtoCheck.setAdvertisement(ad);
+					break;
+				}
+			}
+			return postDtoCheck;
 		}
+		return "Please select and Advertisement";
 	}
-	return postDtoCheck;}}
+}
 
 
 

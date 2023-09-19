@@ -12,9 +12,17 @@ import java.util.List;
 public interface PostRepo extends JpaRepository<Post, Integer>{
 
     boolean existsByPostName(String postName);
-   // int findAllById(advertisementNo);
+    // int findAllById(advertisementNo);
 
     List<Post> findByAdvertisementAdvertisementId(Integer advertisementId);
+
+    Post findByPostCode(String postCode);
+
+    List<Post> findByAdvertisement_AdvertisementNo(String advertisementNo);
+
+//    Post findByPI(Integer pI);
+
+//    Post findOneByIgnoreCasePostCode(Integer postCode);
 
 //    List<Post> findByadvertisementNo(Integer advertisementNo);
 }
